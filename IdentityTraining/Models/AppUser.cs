@@ -6,7 +6,7 @@ namespace IdentityTraining.Models
     public class AppUser : IdentityUser
     {
         [Required]
-        public string? Nome { get; set; }
-        public string? Cognome { get; set; }
+        public string? Name { get; set; }
+        public string? Surname { get; set; }
     }
 }
