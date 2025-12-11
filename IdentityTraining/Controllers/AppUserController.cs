@@ -21,8 +21,9 @@ namespace IdentityTraining.Controllers
             _roleManager = roleManager;
         }
 
+        //REGISTRAZIONE
         [AllowAnonymous]
-        public IActionResult Registration()
+        public async Task<IActionResult> Registration()
         {
             return View();
         }
@@ -31,72 +32,82 @@ namespace IdentityTraining.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Save(RegistrationMod registration)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                return View("Registration");
+            }
+            AppUser newUser = new AppUser()
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserName = registration.Email,
+                Email = registration.Email,
+                Name = registration.Name,
+                Surname = registration.Surname,
+                TwoFactorEnabled = false,
+                LockoutEnabled = false,
+                EmailConfirmed = true
+            };
+
+            IdentityResult Ires = await _userManager.CreateAsync(newUser, registration.Password);
+
+            if (!Ires.Succeeded)
+            {
+                foreach (var err in Ires.Errors)
                 {
-                    AppUser newUser = new AppUser()
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        UserName = registration.Email,
-                        Email = registration.Email,
-                        Name = registration.Name,
-                        Surname = registration.Surname,
-                        EmailConfirmed = true,
-                        PhoneNumberConfirmed = false,
-                        TwoFactorEnabled = false,
-                        LockoutEnabled = false
-                    };
-
-                    IdentityResult Ires = await _userManager.CreateAsync(newUser);
-
-                    if (Ires.Succeeded)
-                    {
-                        var roleExist = await _roleManager.RoleExistsAsync("User");
-                        if (!roleExist)
-                        {
-                            await _roleManager.CreateAsync(new IdentityRole("User"));
-                        }
-                        await _userManager.AddToRoleAsync(newUser, "User");
-                        return RedirectToAction("Login");
-                    }
+                    ModelState.AddModelError("", err.Description);
+                    Console.WriteLine(err.Description);
                 }
+                return View("Registration", registration);
             }
-            catch (Exception ex)
-            {
 
+            if (Ires.Succeeded)
+            {
+                if (!await _roleManager.RoleExistsAsync("User"))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole("User"));
+                }
+                await _userManager.AddToRoleAsync(newUser, "User");
+                return RedirectToAction("Login");
             }
-            return View("Register");
+
+            return View("Registration");
         }
 
+        //LOGIN
         [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
         }
-
+        // Epicode2025
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(LoginRequest loginRequest)
+        public async Task<IActionResult> Login(LoginRequest login)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-
-                }
+                return View(login);
             }
-            catch
+
+            AppUser user = await _userManager.FindByEmailAsync(login.Email);
+
+            if (user == null)
             {
-
+                return Content("Email non trovata");
             }
-            return View("Login");
-        }
 
-        [AllowAnonymous]
-        public IActionResult AccessDenied()
-        {
-            return View();
+            var res = await _signInManager.PasswordSignInAsync(
+                user,
+                login.Password,
+                isPersistent: true,
+                lockoutOnFailure: false
+                );
+
+            if (res.Succeeded)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return Content("Password errata");
         }
     }
 }

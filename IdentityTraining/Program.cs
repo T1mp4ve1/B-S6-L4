@@ -16,12 +16,8 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options => //
     options.Password.RequireDigit = true; //
     options.Password.RequireUppercase = true; //
     options.Password.RequireLowercase = true; //
-    //option.Password.RequireNonAlphanumeric = true; //
-}).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders(); //
-
-builder.Services.AddScoped<UserManager<AppUser>>(); //
-builder.Services.AddScoped<SignInManager<AppUser>>(); //
-builder.Services.AddScoped<RoleManager<IdentityRole>>(); //
+    options.Password.RequireNonAlphanumeric = false; //
+}).AddRoles<IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders(); //
 
 builder.Services.AddControllersWithViews();
 
@@ -37,7 +33,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

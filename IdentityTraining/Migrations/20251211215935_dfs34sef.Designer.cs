@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityTraining.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251211190809_sgr")]
-    partial class sgr
+    [Migration("20251211215935_dfs34sef")]
+    partial class dfs34sef
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
