@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("IdentityTraining")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7e553feae21f98717330b1a53b7fde0d29fbb389")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ca08d82528ac56c4adedb13ad6684085808ea902")]
 [assembly: System.Reflection.AssemblyProductAttribute("IdentityTraining")]
 [assembly: System.Reflection.AssemblyTitleAttribute("IdentityTraining")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,15 +1,35 @@
+using IdentityTraining.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddDbContext<AppDbContext>(options => //
+options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); //
+
+builder.Services.AddIdentity<AppUser, IdentityRole>(options => //
+{
+    options.SignIn.RequireConfirmedPhoneNumber = false; //
+    options.SignIn.RequireConfirmedEmail = false; //
+    options.SignIn.RequireConfirmedAccount = false; //
+    options.Password.RequiredLength = 8; //
+    options.Password.RequireDigit = true; //
+    options.Password.RequireUppercase = true; //
+    options.Password.RequireLowercase = true; //
+    //option.Password.RequireNonAlphanumeric = true; //
+}).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders(); //
+
+builder.Services.AddScoped<UserManager<AppUser>>(); //
+builder.Services.AddScoped<SignInManager<AppUser>>(); //
+builder.Services.AddScoped<RoleManager<IdentityRole>>(); //
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
